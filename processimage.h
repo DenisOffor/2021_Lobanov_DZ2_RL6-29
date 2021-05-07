@@ -17,8 +17,8 @@ enum States{
 class Image
 {
 private:
-  int height;
-  int width;
+  int height; //высота картинки
+  int width; //ширина картинки
 public:
   QImage image;
   int** Matrix;
@@ -39,8 +39,8 @@ private:
   int CoordinateCentreOne;
   int CoordinateCentreTwo;
   QStringList list;
-  int height;
-  int width;
+  int height; //троки матрицы
+  int width; //столбцы матрицы
 public:
   int** Matrix;
   Mask();
@@ -68,9 +68,9 @@ private:
   Image img;
   Mask mask;
   int** OutlineMatrix;
-  States states;
-  int DepthOfDilatation;
-  int DepthOfErosion;
+  States states; // что сейчас выполняется: эрозия, дилатация или контур
+  int DepthOfDilatation;  // кол-во дилатаций
+  int DepthOfErosion; //кол-во эрозий
 public:
   static QString NameOfMask, NameOfPicture, WayToFile;
 

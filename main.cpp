@@ -16,9 +16,9 @@ QString ImageProcessing::NameOfPicture = "/Picture.png";
 
 int main(int argc, char *argv[])
 {
- int DepthOfDilatation = atoi(argv[1]);
- int DepthOfErosion = atoi(argv[2]);
- int WidthOutline = atoi(argv[3]);
+ int DepthOfDilatation = atoi(argv[1]);  //кол-во дилатаций
+ int DepthOfErosion = atoi(argv[2]); //кол-во эрозий
+ int WidthOutline = atoi(argv[3]); //ширина контура в пикселях
  ImageProcessing process;
  process.Erosion(DepthOfErosion);
  process.Dilatation(DepthOfDilatation);

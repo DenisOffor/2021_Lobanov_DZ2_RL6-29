@@ -17,8 +17,9 @@ Image::Image()
 
 void Image::ImageLoad()
 {
-  if(!image.load(ImageProcessing::WayToFile + ImageProcessing::NameOfPicture))
-    return;                                                                           //загрузка изображения
+  if(!image.load(ImageProcessing::WayToFile + ImageProcessing::NameOfPicture)){
+    return;
+    }                                                                                  //загрузка изображения
   height = image.height();
   width = image.width();
 }
@@ -26,7 +27,7 @@ void Image::ImageLoad()
 
 void Image::ReadImage()
 {
-  for(int row = 0; row < height; row++)
+  for(int row = 0; row < height; row++){
     for(int col = 0;col < width; col++)
       {
        int n = image.pixelColor(col,row).value();
@@ -34,14 +35,17 @@ void Image::ReadImage()
             CopyMatrix[row][col] = Matrix[row][col];                  //заполнение матрицы пикселей, её копии
             InitialMatrix[row][col] = Matrix[row][col];
       }
+    }
   image = image.convertToFormat(QImage::Format_Mono);
 }
 
 void Image::DoCopyMatrix()
 {
-  for(int row = 0; row < height; row++)
-    for(int col = 0; col < width; col++)             // копирование матрицы в её копию
+  for(int row = 0; row < height; row++){
+    for(int col = 0; col < width; col++){             // копирование матрицы в её копию
       CopyMatrix[row][col] = Matrix[row][col];
+      }
+    }
 }
 
 Image::~Image(){
@@ -62,24 +66,27 @@ Mask::Mask()
 {
   ReadMaskFromFile();
   Matrix = new int*[height];
-  for(int i = 0; i < height; i++)
+  for(int i = 0; i < height; i++){
     Matrix[i] = new int[width];
+    }
   FillMask();
 }
 
 
 Mask::~Mask()
 {
-  for(int i = 0;i < height;i++)
+  for(int i = 0;i < height;i++){
     delete[]  Matrix[i];
+    }
   delete[] Matrix;
 }
 
 void Mask::ReadMaskFromFile()
 {
   QFile File(ImageProcessing::WayToFile + ImageProcessing::NameOfMask);
-  if(!File.open(QIODevice::ReadOnly))
+  if(!File.open(QIODevice::ReadOnly)){
     return;
+    }
   QByteArray text = File.readAll();
   CoordinateCentreOne = text[0] - 48;                                        //считывание маски из файла
   CoordinateCentreTwo = text [2] - 48;
@@ -93,9 +100,11 @@ void Mask::ReadMaskFromFile()
 
 void Mask::FillMask()
 {
-  for(int i = 0; i < height; i++)
-      for(int j = 0; j < width; j++)                     //заполнение маски
+  for(int i = 0; i < height; i++){
+      for(int j = 0; j < width; j++){                     //заполнение маски
         Matrix[i][j] = list[ i * width + j].toInt();
+        }
+    }
 }
 
 ImageProcessing::ImageProcessing()
@@ -107,26 +116,30 @@ ImageProcessing::ImageProcessing()
   WidthMask = mask.GetWidth();
   HeightMask = mask.GetHeight();
   OutlineMatrix = new int*[HeightImage];
-  for(int i=0;i < HeightImage;i++)
+  for(int i=0;i < HeightImage;i++){
     OutlineMatrix[i] = new int[WidthImage];
+    }
 }
 
 ImageProcessing::~ImageProcessing()
 {
-  for(int i = 0;i < HeightImage;i++)
+  for(int i = 0;i < HeightImage;i++){
     delete[] OutlineMatrix[i];
+    }
   delete[] OutlineMatrix;
 }
 
 void ImageProcessing::Dilatation(int DepthOfDilatation)
 {
-  if(states != Outline)
+  if(states != Outline){
     states = Dilat;
+    }
   while(DepthOfDilatation--){
       for(int row = 1; row < HeightImage - 1; row++){
           for(int col = 1; col < WidthImage - 1; col++){
-            if(img.CopyMatrix[row][col] == mask.Matrix[MaskCoorDCentOne][MaskCoordCentTwo])
+            if(img.CopyMatrix[row][col] == mask.Matrix[MaskCoorDCentOne][MaskCoordCentTwo]){
               DelatationFillNewImage({row,col});
+              }
             }
         }
       img.DoCopyMatrix();
@@ -136,31 +149,36 @@ void ImageProcessing::Dilatation(int DepthOfDilatation)
 
 void ImageProcessing::DefineShift(QPair<int,int>& CoordsPoint)
 {
-  CoordsPoint.first -=  MaskCoorDCentOne;
+  CoordsPoint.first -=  MaskCoorDCentOne;                              // определение сдвига для наложения маски при дилатации или проверке совпала ли маска при эрозии
   CoordsPoint.second -= MaskCoordCentTwo;
 }
 
 void ImageProcessing::DelatationFillNewImage(QPair<int,int> CoordsPoint)
 {
   DefineShift(CoordsPoint);
-  for(int x = CoordsPoint.first,iter1 = 0; iter1 < HeightMask; x++, iter1++)
-    for(int y = CoordsPoint.second,iter2 = 0; iter2 < WidthMask; y++, iter2++)
-      if(mask.Matrix[iter1][iter2] == 1)
+  for(int x = CoordsPoint.first,iter1 = 0; iter1 < HeightMask; x++, iter1++){
+    for(int y = CoordsPoint.second,iter2 = 0; iter2 < WidthMask; y++, iter2++){
+      if(mask.Matrix[iter1][iter2] == 1){
         img.Matrix[x][y] = mask.Matrix[iter1][iter2];
+        }
+      }
+    }
 }
 
 void ImageProcessing::Erosion(int DepthOfErosion)
 {
-  if(states != Outline)
+  if(states != Outline){
     states = Eros;
+    }
   while(DepthOfErosion--){
-      for(int row = 1; row < HeightImage - 1; row++)
+      for(int row = 1; row < HeightImage - 1; row++){
         for(int col = 1; col < WidthImage - 1; col++){
             if(img.CopyMatrix[row][col] == mask.Matrix[MaskCoorDCentOne][MaskCoordCentTwo]){
                 if(MaskMatched({row,col}) == false)
                   img.Matrix[row][col] = 0;
               }
           }
+        }
       img.DoCopyMatrix();
     }
   FillNewImage();
@@ -168,13 +186,15 @@ void ImageProcessing::Erosion(int DepthOfErosion)
 
 bool ImageProcessing::MaskMatched(QPair<int, int> CoordsPoint){
   DefineShift(CoordsPoint);
-  for(int x = CoordsPoint.first,iter1 = 0; iter1 < HeightMask; x++, iter1++)
-    for(int y = CoordsPoint.second,iter2 = 0; iter2 < WidthMask; y++, iter2++)       //проверка совпала маска или нет
+  for(int x = CoordsPoint.first,iter1 = 0; iter1 < HeightMask; x++, iter1++){
+    for(int y = CoordsPoint.second,iter2 = 0; iter2 < WidthMask; y++, iter2++){       //проверка совпала маска или нет
       if(mask.Matrix[iter1][iter2] == 1)
         {
           if(img.CopyMatrix[x][y] != mask.Matrix[iter1][iter2])
             return false;
         }
+      }
+    }
   return true;
 }
 
@@ -183,25 +203,30 @@ void ImageProcessing::outline(int WidthOutline)
   states = Outline;
   int eros = WidthOutline / 2;
   Erosion(eros);
-  for(int row = 0 ; row < HeightImage; row++)
-    for(int col = 0; col < WidthImage; col++)
+  for(int row = 0 ; row < HeightImage; row++){
+    for(int col = 0; col < WidthImage; col++){
         OutlineMatrix[row][col] = img.Matrix[row][col];
+      }
+    }
   clear();
   Erosion(1);
   Dilatation(WidthOutline - eros + 1);
   int pix;
-  for(int row = 0 ; row < HeightImage; row++)
+  for(int row = 0 ; row < HeightImage; row++){
     for(int col = 0; col < WidthImage; col++){
          pix = img.Matrix[row][col] - OutlineMatrix[row][col];
          img.image.setPixel(col,row, pix >= 0 ? pix : 0);
       }
+    }
+
+  img.image.save(WayToFile+ "/Outline.png");
   clear();
 }
 
 
 void ImageProcessing::FillNewImage()
 {
-  for(int row = 0; row < HeightImage; row++)
+  for(int row = 0; row < HeightImage; row++){
     for(int col = 0; col < WidthImage; col++){
         if(img.Matrix[row][col] == 1)
           {
@@ -210,6 +235,8 @@ void ImageProcessing::FillNewImage()
           }
         img.image.setPixel(col,row,0);
       }
+    }
+  SaveNewImage();
 }
 
 void ImageProcessing::SaveNewImage(){
@@ -221,17 +248,15 @@ void ImageProcessing::SaveNewImage(){
       img.image.save(WayToFile + "/Erosion.png");
       clear();
     }
-  if(states == Outline){
-      img.image.save(WayToFile+ "/Outline.png");
-      clear();
-    }
+
 }
 
 void ImageProcessing::clear()
 {
-   for(int row = 0; row < HeightImage; row++)
+   for(int row = 0; row < HeightImage; row++){
      for(int col = 0; col < WidthImage; col++){
         img.Matrix[row][col] = img.InitialMatrix[row][col];
         img.CopyMatrix[row][col] = img.InitialMatrix[row][col];
        }
+     }
 }
