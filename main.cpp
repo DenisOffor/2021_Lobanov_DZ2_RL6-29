@@ -12,7 +12,7 @@ QString FindWay()
 
 QString ImageProcessing::WayToFile = FindWay();
 QString ImageProcessing::NameOfMask = "/Mask.txt";
-QString ImageProcessing::NameOfPicture = "/Picture.png";
+QString ImageProcessing::NameOfPicture = "/Picture2.jpg";
 
 int main(int argc, char *argv[])
 {

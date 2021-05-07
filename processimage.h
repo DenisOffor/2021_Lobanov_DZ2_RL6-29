@@ -39,7 +39,7 @@ private:
   int CoordinateCentreOne;
   int CoordinateCentreTwo;
   QStringList list;
-  int height; //троки матрицы
+  int height; //cтроки матрицы
   int width; //столбцы матрицы
 public:
   int** Matrix;
@@ -69,8 +69,6 @@ private:
   Mask mask;
   int** OutlineMatrix;
   States states; // что сейчас выполняется: эрозия, дилатация или контур
-  int DepthOfDilatation;  // кол-во дилатаций
-  int DepthOfErosion; //кол-во эрозий
 public:
   static QString NameOfMask, NameOfPicture, WayToFile;
 
