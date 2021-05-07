@@ -138,7 +138,7 @@ void ImageProcessing::Dilatation(int DepthOfDilatation)
       for(int row = 1; row < HeightImage - 1; row++){
           for(int col = 1; col < WidthImage - 1; col++){
             if(img.CopyMatrix[row][col] == mask.Matrix[MaskCoorDCentOne][MaskCoordCentTwo]){
-              DelatationFillNewImage({row,col});
+              DelatationFillNewImage({row,col});   //если пиксель совпал с центр. эл., то применяю маску
               }
             }
         }
@@ -158,7 +158,7 @@ void ImageProcessing::DelatationFillNewImage(QPair<int,int> CoordsPoint)
   DefineShift(CoordsPoint);
   for(int x = CoordsPoint.first,iter1 = 0; iter1 < HeightMask; x++, iter1++){
     for(int y = CoordsPoint.second,iter2 = 0; iter2 < WidthMask; y++, iter2++){
-      if(mask.Matrix[iter1][iter2] == 1){
+      if(mask.Matrix[iter1][iter2] == 1){                                           //применяем маску к картинке
         img.Matrix[x][y] = mask.Matrix[iter1][iter2];
         }
       }
@@ -173,8 +173,8 @@ void ImageProcessing::Erosion(int DepthOfErosion)
   while(DepthOfErosion--){
       for(int row = 1; row < HeightImage - 1; row++){
         for(int col = 1; col < WidthImage - 1; col++){
-            if(img.CopyMatrix[row][col] == mask.Matrix[MaskCoorDCentOne][MaskCoordCentTwo]){
-                if(MaskMatched({row,col}) == false)
+            if(img.CopyMatrix[row][col] == mask.Matrix[MaskCoorDCentOne][MaskCoordCentTwo]){ //если пиксель совпал с центр. эл, то проверяю совпала ли маска
+                if(MaskMatched({row,col}) == false)        // если не совпала - записываю 0
                   img.Matrix[row][col] = 0;
               }
           }
