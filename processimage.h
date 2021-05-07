@@ -23,7 +23,7 @@ public:
   QImage image;
   int** Matrix;
   int** CopyMatrix;
-  int ** InitialMatrix;
+  int** InitialMatrix;
   Image();
   ~Image();
   void ImageLoad();
@@ -76,17 +76,16 @@ public:
 
   ImageProcessing();
   ~ImageProcessing();
-
+//Для дилатаци....
   void DefineShift(QPair<int,int>&);
-
   void Dilatation(int);
   void DelatationFillNewImage(QPair<int,int>);
-
+//Для эрозии...
   void Erosion(int);
   bool MaskMatched(QPair<int,int>);
-
+//Для контура...
   void outline(int);
-
+//Сохранение картинки....
   void FillNewImage();
   void SaveNewImage();
   void clear();

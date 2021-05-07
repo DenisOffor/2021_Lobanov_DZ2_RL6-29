@@ -18,7 +18,7 @@ Image::Image()
 void Image::ImageLoad()
 {
   if(!image.load(ImageProcessing::WayToFile + ImageProcessing::NameOfPicture))
-    return;
+    return;                                                                           //загрузка изображения
   height = image.height();
   width = image.width();
 }
@@ -31,7 +31,7 @@ void Image::ReadImage()
       {
        int n = image.pixelColor(col,row).value();
             Matrix[row][col] = (n > 127 ? 0 : 1);
-            CopyMatrix[row][col] = Matrix[row][col];
+            CopyMatrix[row][col] = Matrix[row][col];                  //заполнение матрицы пикселей, её копии
             InitialMatrix[row][col] = Matrix[row][col];
       }
   image = image.convertToFormat(QImage::Format_Mono);
@@ -40,7 +40,7 @@ void Image::ReadImage()
 void Image::DoCopyMatrix()
 {
   for(int row = 0; row < height; row++)
-    for(int col = 0; col < width; col++)
+    for(int col = 0; col < width; col++)             // копирование матрицы в её копию
       CopyMatrix[row][col] = Matrix[row][col];
 }
 
@@ -81,7 +81,7 @@ void Mask::ReadMaskFromFile()
   if(!File.open(QIODevice::ReadOnly))
     return;
   QByteArray text = File.readAll();
-  CoordinateCentreOne = text[0] - 48;
+  CoordinateCentreOne = text[0] - 48;                                        //считывание маски из файла
   CoordinateCentreTwo = text [2] - 48;
   text.remove(0,5);
   QString array = text;
@@ -94,7 +94,7 @@ void Mask::ReadMaskFromFile()
 void Mask::FillMask()
 {
   for(int i = 0; i < height; i++)
-      for(int j = 0; j < width; j++)
+      for(int j = 0; j < width; j++)                     //заполнение маски
         Matrix[i][j] = list[ i * width + j].toInt();
 }
 
@@ -169,7 +169,7 @@ void ImageProcessing::Erosion(int DepthOfErosion)
 bool ImageProcessing::MaskMatched(QPair<int, int> CoordsPoint){
   DefineShift(CoordsPoint);
   for(int x = CoordsPoint.first,iter1 = 0; iter1 < HeightMask; x++, iter1++)
-    for(int y = CoordsPoint.second,iter2 = 0; iter2 < WidthMask; y++, iter2++)
+    for(int y = CoordsPoint.second,iter2 = 0; iter2 < WidthMask; y++, iter2++)       //проверка совпала маска или нет
       if(mask.Matrix[iter1][iter2] == 1)
         {
           if(img.CopyMatrix[x][y] != mask.Matrix[iter1][iter2])
@@ -205,7 +205,7 @@ void ImageProcessing::FillNewImage()
     for(int col = 0; col < WidthImage; col++){
         if(img.Matrix[row][col] == 1)
           {
-            img.image.setPixel(col,row,1);
+            img.image.setPixel(col,row,1);                //заполнение пикселей изображения после Эрозии/Дилатации
             continue;
           }
         img.image.setPixel(col,row,0);
